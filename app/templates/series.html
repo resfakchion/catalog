@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+     <script src="{{ url_for('static', filename='js/mainScript.js') }}"></script>
+	
+		<h1> Сериалы</h1>
+ <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.Series.label }}<br>
+             {{ form.Series }}<br>
+        <p>{{ form.submit() }}</p>
+    <a href="/index" ><img src="{{ url_for('static', filename='img/kak.jpg') }}" id="pB" alt="Peaky Blinders" width="320" height="240"/></a>
+      <a><img src="{{ url_for('static', filename='img/st.jpg') }}" id="strangerThings" alt="Peaky Blinders" width="320" height="240"/></a>
+     <a><img src="{{ url_for('static', filename='img/bm.jpg') }}" id="Black mirror" alt="Peaky Blinders" width="320" height="240"/></a>
+
+
+    </form>
+		
+{% endblock %}
