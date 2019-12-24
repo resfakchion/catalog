@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block script %}
+    <script type="text/javascript">
+   window.onload = function()
+            {
+                document.getElementById("raiting").value=1;
+                document.getElementById("newComment").value = " ";
+            }
+            function buttonClick (button)
+            {
+                btn = document.getElementById("failraiting").value;
+                document.getElementById("raiting").value=btn;
+                document.getElementById("newComment").value = "-1";
+                document.querySelector("input[id*='submit']").click();
+            }
+
+    </script>
+{% endblock %}
+{% block content %}
+
+
+<section class="serial" style="display: block">
+	<div class="about1">
+  <!--  <img src="{{ url_for('static', filename= img[0]) }}"  width="320" height="240"/>
+     <img src="{{ url_for('static', filename= img[1]) }}"  width="320" height="240"/>
+     <img src="{{ url_for('static', filename= img[2]) }}"  width="320" height="240"/>
+   -->
+   <div class="elem1">
+   	<h1> {{ title }} </h1>
+   	{% if genre %}
+   	<p>   Жанр: {{ genre }}</p>
+   	{% endif %}
+
+   	{% if nameActors %}
+   	<p> Актёры : </p>
+   	{% for actor in nameActors %}
+   	<p>{{ actor[0] }}</p>
+   	{% endfor %}
+   	{% endif %}
+   </div>
+   <div class="elem2">
+   	<img src="{{ url_for('static', filename= img[3]) }}"  width="320" height="240"/><br>
+   </div>
+ </div>
+ <div class="about2">
+ 	{% if about %}
+ 	<h1>Описание :</h1>
+ 	<p>{{ about }}</p>
+ 	{% endif %}
+
+ 	<form action="" method="post" novalidate >
+    {{ form.hidden_tag() }}
+    <div style="display: none;">
+        {{ form.raiting }}
+    </div>
+
+
+
+ 			<p>
+ 				{% if current_user.is_authenticated == true%}
+ 				{{ form.newComment.label }}<br>
+ 				<a id="comment">{{ form.newComment() }}<br></a>
+ 				{{ form.submit() }}
+ 				{% endif %}
+ 			</p>
+ 			{% if comments %}
+ 			<h1> Комментарии </h1>
+ 			{% for comment in comments %}
+ 			<p>Пользователь: {{ comment[0] }}</p>
+ 			<p>Комментарий: {{ comment[1] }}</p>
+ 			{% endfor %}
+ 			{% endif %}
+
+
+ 		</form>
+ 	</div>
+ </section>
+
+ <div class="about4">
+    <div class="about3">
+ 			<p>
+ 				{% if userRaiting[0] != None %}
+ 				Рейтинг пользователей {{ userRaiting }}
+ 				{% endif %}
+ 				<p>
+ 					{% if current_user.is_authenticated == true%}
+ 					<label for="failraiting">Ваша оценка</label>
+                        <select  id="failraiting" name="failraiting">
+                            <option selected value="1">-</option>
+                            <option value="2">1</option>
+                            <option value="3">2</option>
+                            <option value="4">3</option>
+                            <option value="5">4</option>
+                            <option value="6">5</option>
+                            <option value="7">6</option>
+                            <option value="8">7</option>
+                            <option value="9">8</option>
+                            <option value="10">9</option>
+                            <option value="11">10</option>
+                        </select>
+                        <input type="button" value="Оценить" onclick="buttonClick(this)"/>
+ 					{% endif %}
+ 				</p>
+ 			</div>
+ </div>
+
+ {% endblock %}

@@ -1,22 +1,135 @@
 <html>
     <head>
-      <title>{{ title }}</title>
+          <style>
 
+
+body {
+    display:inline-flex;
+    width: 100wh;
+    height: 90vh;
+    color: black;
+
+    background-size: 400% 400%;
+
+
+    text-align: center;
+    background: url("{{ url_for('static', filename='img/bg.png') }}") ;
+}
+
+
+.header {
+    margin: -10px 0 0 -10px;
+    background: whitesmoke;
+    box-shadow: 0 10px 20px black;
+}
+.header a {
+  display: flex;
+  text-decoration: none;
+  color:black;
+  font-family: arial;
+  font-size: 40px;
+  padding:  10px;
+  border:   5px solid whitesmoke  ;
+  border-radius:  10px;
+ }
+ .header a:hover{
+     background:   gray;
+ }
+
+
+ p {
+  text-align: left;
+  color:black;
+  font-family: arial;
+  font-size: 30px;
+  padding:  10px;
+  border-radius:  10px;
+  margin: auto;
+ }
+textarea {
+    min-width: 1000px;
+    min-height: 200px;
+}
+ input {
+  border:   5px solid whitesmoke  ;
+  border-radius:  10px;
+  background-color: gray;
+  text-decoration: none;
+  color: black;
+  width: 140px;
+  height: 40px;
+
+ }
+button {
+   width: 320px;
+   height:240px;
+
+    padding-right: 140px;
+    padding-bottom: 1px;
+
+   }
+ .form {
+    border-radius:5% ;
+    background: gray;
+    margin-right: auto;
+    margin-bottom: auto;
+    margin-left: 586px;
+    }
+.photo {
+        display: block;
+        margin-left: 100px;
+    }
+.serial {
+    display: block;
+}
+.serial h1 {
+    font-size: 40px;
+    font-family: Arial;
+    text-align: left;
+}
+.about1{
+    display: flex;
+}
+.elem1{
+    display: block;
+}
+.elem2 img{
+    float: right;
+}
+.about2{
+    text-align: left;
+}
+.about3{
+
+}
+    .row {
+        background: gray;
+        display: flex;
+        border: 0;
+    }
+   .row a:hover {
+       opacity: 0.8;
+   }
+
+</style>
+      <title>{{ title }}</title>
+    {% block script %}
+
+    {% endblock %}
     </head>
     <body>
-        <div>
+        <section class="header">
           <a href="/index">Главная страница</a>
-            {% if user.login == 'none' %}
+            {% if current_user.is_authenticated == false %}
          <a href="/login">Вход</a>
             <a href="/reg">Регистрация</a>
             {% else %}
          <a href="/logout">Выход</a>
             <a href="/account">Личный кабинет</a>
             {% endif %}
-        <a href="/series">Серилы</a>
-       </div>
+        <a href="/series">Сериалы</a>
+       </section>
 
-        <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
@@ -28,119 +141,6 @@
         {% endwith %}
         {% block content %}{% endblock %}
 
-      <style>
 
-body {
-    display:inline-flex;
-    width: 100wh;
-    height: 90vh;
-    color: #fff;
-    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
-    background-size: 400% 400%;
-    -webkit-animation: Gradient 20s ease infinite;
-    -moz-animation: Gradient 20s ease infinite;
-    animation: Gradient 20s ease infinite;
-    text-align: center;
-}
-
-
-@-webkit-keyframes Gradient {
-    0% {
-        background-position: 0% 50%
-    }
-    25% {
-        background-position: 50% 75%
-    }
-    50% {
-        background-position: 100% 75%
-    }
-    75% {
-        background-position: 75% 50%
-    }
-    100% {
-        background-position: 0% 50%
-    }
-}
-
-@-moz-keyframes Gradient {
-    0% {
-        background-position: 0% 50%
-    }
-    25% {
-        background-position: 50% 75%
-    }
-    50% {
-        background-position: 100% 75%
-    }
-    75% {
-        background-position: 75% 50%
-    }
-    100% {
-        background-position: 0% 50%
-    }
-}
-
-@keyframes Gradient {
-    0% {
-        background-position: 0% 50%
-    }
-    25% {
-        background-position: 50% 75%
-    }
-    50% {
-        background-position: 100% 75%
-    }
-    75% {
-        background-position: 75% 50%
-    }
-    100% {
-        background-position: 0% 50%
-    }
-}
-
-div {
-  border-right: 6px solid whitesmoke;
-  padding-right: 20px;
-} 
-div a { 
-  display: flex;
-  text-decoration: none;
-  color:whitesmoke;
-  font-family: arial;
-  font-size: 40px;
-  padding:  10px;
-  border:   5px solid whitesmoke  ;
-  border-radius:  10px;
-  margin-left: 40px;
- }
- div a: hover{background:   whitesmoke; color:  none};
- hr{
-  margin: 0px;
- }
-
- p {
-  text-align: center;
-  color:whitesmoke;
-  font-family: arial;
-  font-size: 40px;
-  padding:  10px;
-  border:   5px solid whitesmoke  ;
-  border-radius:  10px;
-  margin: auto;
-  margin-left: 586px;
- }
-
- input {
-  border:   5px solid whitesmoke  ;
-  border-radius:  10px;
-  background: none;
-  text-decoration: none
-  color: whitesmoke;
-
- }
-
- 
-
-</style>
     </body>
 </html>

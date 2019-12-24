@@ -1,13 +1,30 @@
 # - *- coding: utf-8 -*-
-import os
-import psycopg2
 import psycopg2.extras
 from flask import render_template, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import flash
+from flask_login import LoginManager, UserMixin, logout_user, login_required, login_user, current_user
 
 from app import app
-from app.forms import LoginForm, RegistrationForm, SeriesForm, ActorForm
+from app.forms import LoginForm, RegistrationForm, CommentForm
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+    def __repr__(self):
+        return "%d/%s/%s/%s/%d" % (self.id)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
 
 user = {'login': 'none', 'password': 'none'}
 try:
@@ -18,19 +35,23 @@ except psycopg2.Error as err:
 
 
 @app.route('/')
+def start():
+   return redirect(url_for("series"))
+
 @app.route('/logout')
+@login_required
 def logout():
-    user['login'] = 'none'
-    user['password'] = 'none'
+    logout_user()
+    flash('Вы вышли из профиля')
     return redirect(url_for('index'))
 
 
 @app.route('/account')
 def account():
-    if user['login'] != 'none':
-
+    if current_user.is_authenticated:
         return render_template('account.html', title="Личный Кабинет", user=user)
     else:
+        flash('Вы ещё не вошли в свой аккаунт')
         return redirect(url_for('index'))
 
 
@@ -41,17 +62,21 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global user
+    global username
+    if current_user.is_authenticated:
+        flash('Вы уже авторизированны')
+        return redirect(url_for('account'))
     form = LoginForm()
     if form.validate_on_submit():
         cursor = conn.cursor()
         cursor.execute('select pwdHash,login from Пользователь where  login = %s', (form.login.data,))
         conn.commit()
-        record = cursor.fetchall()
+        record = cursor.fetchone()
         cursor.close()
-        if record and check_password_hash(record[0][0], form.password.data):
-            user['login'] = record[0][1]
-            user['password'] = record[0][0]
+        if record and check_password_hash(record[0], form.password.data):
+            username = record[1]
+            user_id = User(username)
+            login_user(user_id, remember=form.remember_me.data)
             flash('Вы успешно вошли!')
             return redirect(url_for('account'))
         else:
@@ -61,8 +86,11 @@ def login():
 
 @app.route('/reg', methods=['GET', 'POST'])
 def registration():
+    if current_user.is_authenticated:
+        flash('Вы уже зарегистрированы')
+        return redirect(url_for('account'))
     form = RegistrationForm()
-    if form.validate_on_submit and form.password.data != None and form.password.data != '':
+    if form.validate_on_submit():
         if form.password.data == form.checkPassword.data:
             cursor = conn.cursor()
             cursor.execute('select login from Пользователь where  login = %s', (form.login.data,))
@@ -84,7 +112,60 @@ def registration():
 
 @app.route('/series', methods=['GET', 'POST'])
 def series():
-    form = SeriesForm()
-    if form.validate_on_submit:
-        k = 0;
-        return render_template('series.html', title='Series', form=form, user=user)
+    return render_template('series.html', title='Series', user=user)
+
+
+@app.route('/series/<idSerial>', methods=['GET', 'POST'])
+def seriesId(idSerial):
+    cursor = conn.cursor()
+    cursor.execute('select Название From Сериал where id = %s', (idSerial,))
+    conn.commit()
+    title = cursor.fetchone()
+    if title == None:
+        flash("Данного сериала не существует")
+        return redirect(url_for('index'))
+    cursor.execute('select Название_жанра From Жанр_сериала where  idSerial = %s', (idSerial,))
+    conn.commit()
+    genre = cursor.fetchone()
+
+    img = []
+    for i in range(1, 5):
+        filename = 'img/' + str(idSerial) + '/' + str(i) + '.jpg'
+        img.append(filename)
+
+    cursor.execute('select Описание From Описание_сериала where idAbout = %s', (idSerial,))
+    conn.commit()
+    about = cursor.fetchone()
+    form = CommentForm()
+    if form.validate_on_submit() and current_user.is_authenticated:
+        cursor.execute('select login  From Рейтинг_пользователя where login = %s and idSerial = %s',
+                       (current_user.id, idSerial,))
+        conn.commit()
+        record = cursor.fetchone()
+        if not record:
+            if form.raiting.data != '1':
+                cursor.execute('INSERT INTO Рейтинг_пользователя(idSerial,login,Оценка)  VALUES (%s,%s,%s)',
+                               (idSerial, current_user.id, int(form.raiting.data) - 1,))
+                conn.commit()
+        else:
+                flash("Вы уже проголосовали")
+        if form.newComment.data != '' and form.newComment.data != '-1':
+            cursor.execute('INSERT INTO Комментарий_сериала(idSerial,login,Комментарий) VALUES (%s,%s,%s)',
+                           (idSerial, current_user.id, form.newComment.data,))
+            conn.commit()
+
+    cursor.execute('select avg(Оценка) From Рейтинг_пользователя where idSerial = %s', (idSerial,))
+    conn.commit()
+    userRaiting = cursor.fetchone()
+    if userRaiting[0] != None:
+        userRaiting = float(userRaiting[0])
+    cursor.execute('select ФИО_актёра From Актёр_сериала where idSerial = %s', (idSerial,))
+    conn.commit()
+    nameActors = cursor.fetchall()
+
+    cursor.execute('select login,Комментарий  from Комментарий_сериала where  idSerial = %s', (idSerial,))
+    conn.commit()
+    comments = cursor.fetchall()
+    return render_template('baseSerial.html', title=title[0], user=user, img=img, about=about[0], genre=genre[0],
+                           comments=comments, form=form, userRaiting=userRaiting,
+                           nameActors=nameActors)

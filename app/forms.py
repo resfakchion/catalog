@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField , SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField,TextAreaField
 from wtforms.validators import DataRequired
 import psycopg2.extras
+seriesName = ''
+
 try:
     conn = psycopg2.connect("dbname='Catalog' user='postgres'" \
                             " host='localhost' password='nike1234'")
@@ -22,18 +24,21 @@ class RegistrationForm(FlaskForm):
     checkPassword = PasswordField('СoniformPassword', validators=[DataRequired()])
     submit = SubmitField('Sign In')
 
+
+'''class RaitingForm(FlaskForm):
+    raiting = SelectField('Ваша оценка', choices=[('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5'),('6', '6'),('7', '7'),('8', '8'),('9', '9'),('10', '10')], coerce=int)
+    submit = SubmitField('Оценить')
+'''
+
 class SeriesForm(FlaskForm):
     cursor = conn.cursor()
     cursor.execute('select id,Название From Сериал')
     seriesName = cursor.fetchall()
-
-    Series = SelectField('Cериалы',choices =  seriesName,coerce=int)
+    Series = SelectField('Cериалы', choices=seriesName, coerce=int)
     submit = SubmitField('Done')
 
-class ActorForm(FlaskForm):
-    cursor = conn.cursor()
-    cursor.execute('select id,ФИО_актёра From Актёр_серии ')
-    seriesName = cursor.fetchall()
 
-    Series = SelectField('Cериалы',choices =  seriesName,coerce=int)
-    submit = SubmitField('Done')
+class CommentForm(FlaskForm):
+    raiting = SelectField('Ваша оценка',choices=[('1',"-"), ('2', "1"), ('3', "2"), ('4', "3"), ('5', "4"), ('6', "5"), ('7', "6"), ('8', "7"),('9', "8"), ('10', "9"), ('11', "10")])
+    newComment = TextAreaField('Оставить ваш комментарий',validators=[DataRequired()])
+    submit = SubmitField('Отправить')

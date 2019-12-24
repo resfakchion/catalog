@@ -1,19 +1,32 @@
 {% extends "base.html" %}
+
+
 {% block content %}
-     <script src="{{ url_for('static', filename='js/mainScript.js') }}"></script>
-	
-		<h1> Сериалы</h1>
- <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.Series.label }}<br>
-             {{ form.Series }}<br>
-        <p>{{ form.submit() }}</p>
-    <a href="/index" ><img src="{{ url_for('static', filename='img/kak.jpg') }}" id="pB" alt="Peaky Blinders" width="320" height="240"/></a>
-      <a><img src="{{ url_for('static', filename='img/st.jpg') }}" id="strangerThings" alt="Peaky Blinders" width="320" height="240"/></a>
-     <a><img src="{{ url_for('static', filename='img/bm.jpg') }}" id="Black mirror" alt="Peaky Blinders" width="320" height="240"/></a>
+
+	<style>
+
+    </style>
+    <section class="photo">
+<div class="row">
+  <a href="{{ '/series/1'  }}"> <img src="{{ url_for('static', filename='img/kak.jpg') }}"  id="serial_1" onclick="buttonClick(this)"  alt="Peaky Blinders" width="320" height="470"/> </a>
+     <a href="{{ '/series/2'  }}"> <img src="{{ url_for('static', filename='img/st.jpg') }}" id="serial_2" onclick="buttonClick(this)" alt="Stranger Things" width="320" height="470"/></a>
+    <a href="{{ '/series/3'  }}">  <img src="{{ url_for('static', filename='img/bm.jpg') }}" id="serial_3" onclick="buttonClick(this)" alt="Black Mirror" width="320" height="470"/></a>
+    <br>
+    </div>
+    <div class="row">
+  <a href="{{ '/series/4'  }}"> <img src="{{ url_for('static', filename='img/method.jpg') }}"  id="serial_4" onclick="buttonClick(this)"  alt="Метод" width="320" height="470"/></a>
+    <a href="{{ '/series/5'  }}"><img src="{{ url_for('static', filename='img/rick.jpg') }}" id="serial_5" onclick="buttonClick(this)" alt="Рик и Морти" width="320" height="470"/></a>
+      <a href="{{ '/series/6'  }}"><img src="{{ url_for('static', filename='img/sluga.jpg') }}" id="serial_6" onclick="buttonClick(this)" alt="Слуга Народа" width="320" height="470"/></a>
+    </div>
+    <div class="row">
+  <a href="{{ '/series/7'  }}"> <img src="{{ url_for('static', filename='img/dk.jpg') }}"  id="serial_7" onclick="buttonClick(this)"  alt="Доктор Хаус" width="320" height="470"/></a>
+    <a href="{{ '/series/8'  }}"><img src="{{ url_for('static', filename='img/ment.jpg') }}" id="serial_8" onclick="buttonClick(this)" alt="Полицейский с Рублёвки" width="320" height="470"/></a>
+      <a href="{{ '/series/9'  }}"><img src="{{ url_for('static', filename='img/chern.jpg') }}" id="serial_9" onclick="buttonClick(this)" alt="Чернобыль" width="320" height="470"/></a>
+    </div>
+    </section>
 
 
-    </form>
+
+
 		
 {% endblock %}
