@@ -1,10 +1,19 @@
 
 {% extends "base.html" %}
 {% block content %}
-	
+	<section class="profile">
 		<h1> Личный кабинет</h1>
-        <a>Добро пожаловать {{current_user.id}} !</a>
-		
+    <div style="transform: translateX(20px)" class="about2">
+        <p>Добро пожаловать {{current_user.id}} !</p>
+    {% if comments %}
+ 			<h2> Ваши Комментарии </h2>
+ 			{% for comment in comments %} <div class="comments">
+             <h2> {{ comment[1] }}</h2>
+             <p>{{ comment[0] }}</p>  </div>
+             {% endfor %}
+             {% endif %}
+    </div>
+		</section>
 {% endblock %}
 <style>
 

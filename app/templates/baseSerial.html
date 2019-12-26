@@ -21,10 +21,8 @@
 
 <section class="serial" style="display: block">
 	<div class="about1">
-  <!--  <img src="{{ url_for('static', filename= img[0]) }}"  width="320" height="240"/>
-     <img src="{{ url_for('static', filename= img[1]) }}"  width="320" height="240"/>
-     <img src="{{ url_for('static', filename= img[2]) }}"  width="320" height="240"/>
-   -->
+
+
    <div class="elem1">
    	<h1> {{ title }} </h1>
    	{% if genre %}
@@ -53,9 +51,6 @@
     <div style="display: none;">
         {{ form.raiting }}
     </div>
-
-
-
  			<p>
  				{% if current_user.is_authenticated == true%}
  				{{ form.newComment.label }}<br>
@@ -65,13 +60,11 @@
  			</p>
  			{% if comments %}
  			<h1> Комментарии </h1>
- 			{% for comment in comments %}
- 			<p>Пользователь: {{ comment[0] }}</p>
- 			<p>Комментарий: {{ comment[1] }}</p>
- 			{% endfor %}
- 			{% endif %}
-
-
+ 			{% for comment in comments %} <div class="comments">
+             <h2> {{ comment[0] }}</h2>
+             <p>{{ comment[1] }}</p>  </div>
+             {% endfor %}
+             {% endif %}
  		</form>
  	</div>
  </section>
@@ -84,7 +77,11 @@
  				{% endif %}
  				<p>
  					{% if current_user.is_authenticated == true%}
- 					<label for="failraiting">Ваша оценка</label>
+                         {% if userNote != None %}
+ 					<label for="failraiting">Ваша оценка </label>
+ 				             <p>{{ userNote }}</p>
+ 				        {% else %}
+                        <label for="failraiting">Поставить оценку</label>
                         <select  id="failraiting" name="failraiting">
                             <option selected value="1">-</option>
                             <option value="2">1</option>
@@ -99,9 +96,12 @@
                             <option value="11">10</option>
                         </select>
                         <input type="button" value="Оценить" onclick="buttonClick(this)"/>
+                     {% endif %}
  					{% endif %}
  				</p>
  			</div>
  </div>
+
+
 
  {% endblock %}

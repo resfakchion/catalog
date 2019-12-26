@@ -38,10 +38,9 @@ body {
 
 
  p {
-  text-align: left;
   color:black;
   font-family: arial;
-  font-size: 30px;
+  font-size: 45px;
   padding:  10px;
   border-radius:  10px;
   margin: auto;
@@ -51,13 +50,14 @@ textarea {
     min-height: 200px;
 }
  input {
+     font-size: 20px;
   border:   5px solid whitesmoke  ;
   border-radius:  10px;
   background-color: gray;
   text-decoration: none;
-  color: black;
-  width: 140px;
-  height: 40px;
+  color: whitesmoke;
+
+  height: 60px;
 
  }
 button {
@@ -86,21 +86,49 @@ button {
     font-size: 40px;
     font-family: Arial;
     text-align: left;
+    padding-left: 20px;
+    margin: 10px 0 0 0;
+}
+.serial p {
+     font-size:35px;
 }
 .about1{
+    background: gray;
     display: flex;
+    border-radius: 30px;
 }
 .elem1{
     display: block;
 }
 .elem2 img{
     float: right;
+    margin: 10px;
+}
+h2 {
+    padding-left: 20px;
+    font-size:60px;
+    margin: 0;
+}
+.comments {
+    background: gray;
+    border-radius: 30px;
+    border: 10px solid whitesmoke;
+    width: 95%;
+
 }
 .about2{
+    background: gray;
     text-align: left;
+    border-radius: 30px;
+      padding-bottom: 20px;
+}
+.about2 input{
+    width: 222px;
 }
 .about3{
-
+background: gray;
+    border-radius: 30px;
+    margin: 0 0 0 10px;
 }
     .row {
         background: gray;
@@ -110,7 +138,37 @@ button {
    .row a:hover {
        opacity: 0.8;
    }
-
+.about4 ul {
+    font-size: 20px;
+}
+  .main h1 {
+      text-align: center;
+      margin-left: 200px;
+      font-size: 60px;
+  }
+  .profile {
+      display: block;
+  }
+  .profile h1 {
+      text-align: center;
+      margin-left: 500px;
+      font-size: 60px;
+  }
+ .main p {
+     background: gray;
+     height: 200px;
+     margin: 10px;
+     transform: translateX(20px)
+ }
+ .firstElem{
+     display: flex;
+ }
+ .notice {
+     background: #fff8dc;
+ }
+.SecondElem {
+    width: 700px;
+}
 </style>
       <title>{{ title }}</title>
     {% block script %}
@@ -128,17 +186,20 @@ button {
             <a href="/account">Личный кабинет</a>
             {% endif %}
         <a href="/series">Сериалы</a>
+        <p>{{ current_user.id }}<p/>
+           {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <p class="notice">
+                        {% for message in messages %}
+                        {{ message }}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+                    {% endwith %}
+
        </section>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+
         {% block content %}{% endblock %}
 
 

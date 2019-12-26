@@ -49,7 +49,11 @@ def logout():
 @app.route('/account')
 def account():
     if current_user.is_authenticated:
-        return render_template('account.html', title="Личный Кабинет", user=user)
+        cursor = conn.cursor()
+        cursor.execute('SELECT Комментарий,Название FROM Комментарий_сериала Inner join Сериал On Комментарий_сериала.idSerial = Сериал.id Where login = %s', (current_user.id,))
+        conn.commit()
+        comments = cursor.fetchall()
+        return render_template('account.html', title="Личный Кабинет", user=user,comments = comments)
     else:
         flash('Вы ещё не вошли в свой аккаунт')
         return redirect(url_for('index'))
@@ -57,7 +61,14 @@ def account():
 
 @app.route('/index')
 def index():
-    return render_template('index.html', title='Справочник', user=user)
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(id) FROM Пользователь')
+    conn.commit()
+    countUsers = cursor.fetchone()
+    cursor.execute('SELECT COUNT(id) FROM Сериал')
+    conn.commit()
+    countSerial = cursor.fetchone()
+    return render_template('index.html', title='Справочник', user=user,countUsers = countUsers[0],countSerial = countSerial[0])
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -142,12 +153,11 @@ def seriesId(idSerial):
                        (current_user.id, idSerial,))
         conn.commit()
         record = cursor.fetchone()
-        if not record:
-            if form.raiting.data != '1':
-                cursor.execute('INSERT INTO Рейтинг_пользователя(idSerial,login,Оценка)  VALUES (%s,%s,%s)',
-                               (idSerial, current_user.id, int(form.raiting.data) - 1,))
-                conn.commit()
+        if not record and  form.raiting.data != '1':
+             cursor.execute('INSERT INTO Рейтинг_пользователя(idSerial,login,Оценка)  VALUES (%s,%s,%s)',(idSerial, current_user.id, int(form.raiting.data) - 1,))
+             conn.commit()
         else:
+            if form.newComment.data == '' or form.newComment.data == '-1' :
                 flash("Вы уже проголосовали")
         if form.newComment.data != '' and form.newComment.data != '-1':
             cursor.execute('INSERT INTO Комментарий_сериала(idSerial,login,Комментарий) VALUES (%s,%s,%s)',
@@ -158,14 +168,21 @@ def seriesId(idSerial):
     conn.commit()
     userRaiting = cursor.fetchone()
     if userRaiting[0] != None:
-        userRaiting = float(userRaiting[0])
+        userRaiting = round(userRaiting[0],2)
+    cursor.execute('select Оценка From Рейтинг_пользователя where login = %s and idSerial = %s', (current_user.id,idSerial,))
+    conn.commit()
+    userNote= cursor.fetchone()
+    if userNote != None :
+        userNote = round(userNote[0],2)
+
     cursor.execute('select ФИО_актёра From Актёр_сериала where idSerial = %s', (idSerial,))
     conn.commit()
     nameActors = cursor.fetchall()
+
 
     cursor.execute('select login,Комментарий  from Комментарий_сериала where  idSerial = %s', (idSerial,))
     conn.commit()
     comments = cursor.fetchall()
     return render_template('baseSerial.html', title=title[0], user=user, img=img, about=about[0], genre=genre[0],
-                           comments=comments, form=form, userRaiting=userRaiting,
+                           comments=comments, form=form, userRaiting=userRaiting,userNote = userNote,
                            nameActors=nameActors)
