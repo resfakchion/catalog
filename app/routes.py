@@ -26,10 +26,9 @@ def load_user(user_id):
     return User(user_id)
 
 
-user = {'login': 'none', 'password': 'none'}
 try:
-    conn = psycopg2.connect("dbname='Catalog' user='postgres'" \
-                            " host='localhost' password='nike1234'")
+    conn = psycopg2.connect("dbname='d13els2dc8llov' user='kmtxbmyrifiiei'" \
+                            " host='ec2-176-34-183-20.eu-west-1.compute.amazonaws.com' password='7327af8b47965e5de01691bad9f107792912b7ec3a826662e0cd250d9c75bb1c'")
 except psycopg2.Error as err:
     print("Connection error: {}".format(err))
 
